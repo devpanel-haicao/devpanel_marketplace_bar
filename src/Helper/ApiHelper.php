@@ -12,32 +12,14 @@ class ApiHelper {
     }
 
     $git_branch = getenv('DP_GIT_BRANCH');
-    $hostname = getenv('DP_HOSTNAME');
 
-    if ($git_branch === 'main') {
-      $base_proxy_url = 'https://www.drupalforge.org';
-    }
-    else {
-      $current_env = 'dev';
-      if ($hostname) {
-        $parts = explode('-', $hostname);
-        $current_env = $parts[0] ?? 'dev';
-      }
-
-      switch ($current_env) {
-        case 'local':
-        case 'docksal':
-          $base_proxy_url = 'https://drupal-forge.docksal.site:8444';
-          break;
-        case 'stage':
-        case 'staging':
-          $base_proxy_url = 'https://stage.drupalforge.org';
-          break;
-        case 'dev':
-        default:
-          $base_proxy_url = 'https://dev.drupalforge.org';
-          break;
-      }
+    switch ($git_branch) {
+      case 'main':
+        $base_proxy_url = 'https://www.drupalforge.org';
+        break;
+      default:
+        $base_proxy_url = 'https://stage.drupalforge.org';
+        break;
     }
 
     $proxy_url = $base_proxy_url . '/api/internal/alert-app-info?app_id=' . $app_id;
