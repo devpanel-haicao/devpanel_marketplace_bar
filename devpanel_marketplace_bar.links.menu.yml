@@ -1,0 +1,6 @@
+devpanel_marketplace_bar.settings:
+  title: 'DevPanel Marketplace Bar'
+  description: 'Configure DevPanel Marketplace Bar settings.'
+  parent: system.admin_config_system
+  route_name: devpanel_marketplace_bar.settings
+  weight: 100

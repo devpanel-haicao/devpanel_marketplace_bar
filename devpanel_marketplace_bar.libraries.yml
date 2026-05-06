@@ -1,0 +1,7 @@
+marketplace_bar:
+  version: 1.0
+  css:
+    theme:
+      css/alert-bar.css: {}
+  js:
+    js/alert-bar.js: {}

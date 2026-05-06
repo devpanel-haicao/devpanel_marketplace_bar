@@ -1,0 +1,55 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for DevPanel Marketplace Bar module.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function devpanel_marketplace_bar_theme($existing, $type, $theme, $path) {
+  return [
+    'devpanel_marketplace_bar' => [
+      'variables' => [
+        'app_name' => '',
+        'sub_id' => '',
+        'email' => '',
+        'buy_link' => '',
+        'show_buy_now' => FALSE,
+      ],
+      'template' => 'devpanel-marketplace-bar',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_page_bottom().
+ */
+function devpanel_marketplace_bar_page_bottom(array &$page_bottom) {
+  $config = \Drupal::config('devpanel_marketplace_bar.settings');
+  
+  // Do not show the bar if it's disabled.
+  if (!$config->get('enabled')) {
+    return;
+  }
+
+  $data = $config->get('data') ?: [];
+  
+  $page_bottom['devpanel_marketplace_bar'] = [
+    '#theme' => 'devpanel_marketplace_bar',
+    '#app_name' => $data['appName'] ?? 'My Application',
+    '#sub_id' => $data['subId'] ?? '',
+    '#email' => $data['email'] ?? '',
+    '#buy_link' => $data['buyLink'] ?? '',
+    '#show_buy_now' => !empty($data['showBuyNow']),
+    '#attached' => [
+      'library' => [
+        'devpanel_marketplace_bar/marketplace_bar',
+      ],
+    ],
+    '#cache' => [
+      'tags' => $config->getCacheTags(),
+    ],
+  ];
+}

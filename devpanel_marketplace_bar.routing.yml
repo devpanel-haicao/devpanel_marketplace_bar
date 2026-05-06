@@ -1,0 +1,7 @@
+devpanel_marketplace_bar.settings:
+  path: '/admin/config/system/devpanel-marketplace-bar'
+  defaults:
+    _form: '\Drupal\devpanel_marketplace_bar\Form\SettingsForm'
+    _title: 'DevPanel Marketplace Bar Settings'
+  requirements:
+    _permission: 'administer site configuration'

@@ -1,0 +1,6 @@
+name: 'DevPanel Marketplace Bar'
+type: module
+description: 'Displays a top alert bar fetched from DevPanel marketplace for the current application.'
+package: DevPanel
+core_version_requirement: ^8.8 || ^9 || ^10 || ^11
+configure: devpanel_marketplace_bar.settings

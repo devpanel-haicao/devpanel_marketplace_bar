@@ -1,0 +1,14 @@
+{
+    "name": "devpanel/devpanel_marketplace_bar",
+    "description": "DevPanel Marketplace Bar module for Drupal.",
+    "type": "drupal-module",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": ">=7.3"
+    },
+    "extra": {
+        "drupal": {
+            "version": "1.0.0"
+        }
+    }
+}

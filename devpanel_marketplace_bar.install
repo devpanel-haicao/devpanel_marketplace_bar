@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the DevPanel Marketplace Bar module.
+ */
+
+use Drupal\devpanel_marketplace_bar\Helper\ApiHelper;
+
+/**
+ * Implements hook_install().
+ */
+function devpanel_marketplace_bar_install() {
+  // Fetch initial data on install.
+  ApiHelper::fetchAndSaveData();
+}
