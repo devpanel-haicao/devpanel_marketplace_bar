@@ -24,11 +24,33 @@ function devpanel_marketplace_bar_theme($existing, $type, $theme, $path) {
 }
 
 /**
+ * Implements hook_page_attachments().
+ */
+function devpanel_marketplace_bar_page_attachments(array &$attachments) {
+  $config = \Drupal::config('devpanel_marketplace_bar.settings');
+  
+  // Attach the library if the bar is enabled.
+  if ($config->get('enabled')) {
+    $attachments['#attached']['library'][] = 'devpanel_marketplace_bar/marketplace_bar';
+  }
+  
+  // Add cache tag so that the page head cache is invalidated when config changes.
+  $attachments['#cache']['tags'][] = 'config:devpanel_marketplace_bar.settings';
+}
+
+/**
  * Implements hook_page_bottom().
  */
 function devpanel_marketplace_bar_page_bottom(array &$page_bottom) {
   $config = \Drupal::config('devpanel_marketplace_bar.settings');
   
+  // Initialize the render array with cache tags so page cache knows about this config.
+  $page_bottom['devpanel_marketplace_bar'] = [
+    '#cache' => [
+      'tags' => $config->getCacheTags(),
+    ],
+  ];
+
   // Do not show the bar if it's disabled.
   if (!$config->get('enabled')) {
     return;
@@ -36,20 +58,12 @@ function devpanel_marketplace_bar_page_bottom(array &$page_bottom) {
 
   $data = $config->get('data') ?: [];
   
-  $page_bottom['devpanel_marketplace_bar'] = [
+  $page_bottom['devpanel_marketplace_bar'] += [
     '#theme' => 'devpanel_marketplace_bar',
     '#app_name' => $data['appName'] ?? 'My Application',
     '#sub_id' => $data['subId'] ?? '',
     '#email' => $data['email'] ?? '',
     '#buy_link' => $data['buyLink'] ?? '',
     '#show_buy_now' => !empty($data['showBuyNow']),
-    '#attached' => [
-      'library' => [
-        'devpanel_marketplace_bar/marketplace_bar',
-      ],
-    ],
-    '#cache' => [
-      'tags' => $config->getCacheTags(),
-    ],
   ];
 }
