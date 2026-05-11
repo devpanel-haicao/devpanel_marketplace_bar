@@ -6,6 +6,8 @@ class ApiHelper {
 
   public static function fetchAndSaveData() {
     $app_id = getenv('DP_APP_ID');
+    $is_paid = getenv('IS_FS_PAID');
+    
     if (!$app_id) {
       \Drupal::logger('devpanel_marketplace_bar')->warning('DP_APP_ID is empty.');
       return FALSE;
@@ -16,9 +18,11 @@ class ApiHelper {
     switch ($git_branch) {
       case 'main':
         $base_proxy_url = 'https://www.drupalforge.org';
+        $dp_base_url = 'https://console.devpanel.com';
         break;
       default:
         $base_proxy_url = 'https://stage.drupalforge.org';
+        $dp_base_url = 'https://alpha.devpanel.com';
         break;
     }
 
@@ -42,12 +46,26 @@ class ApiHelper {
         $templateId = $api_data['templateId'] ?? 'templateId';
         $showBuyNow = !empty($api_data['showBuyNow']);
 
+        $buy_link = '';
+        if ($is_paid == 'true') {
+          $buy_link = sprintf(
+            '%s/workspaces/%s/projects/%s/applications/%s/overview',
+            $dp_base_url,
+            getenv('DP_WORKSPACE_ID'),
+            getenv('DP_PROJECT_ID'),
+            getenv('DP_APP_ID')
+          );
+        } else {
+          $buy_link = $base_platform_url . $submissionId . '/' . $templateId;
+        }
+
         $safe_data = [
           'appName' => $api_data['appName'] ?? 'My Application',
           'subId' => $submissionId,
           'email' => $api_data['email'] ?? '',
-          'buyLink' => $base_platform_url . $submissionId . '/' . $templateId,
+          'buyLink' => $buy_link,
           'showBuyNow' => $showBuyNow,
+          'isPaid' => $is_paid == 'true' ? 'true' : 'false',
         ];
 
         // Save to config.

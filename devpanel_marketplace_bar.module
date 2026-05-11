@@ -65,5 +65,6 @@ function devpanel_marketplace_bar_page_bottom(array &$page_bottom) {
     '#email' => $data['email'] ?? '',
     '#buy_link' => $data['buyLink'] ?? '',
     '#show_buy_now' => !empty($data['showBuyNow']),
+    '#is_paid'  => !empty($data['isPaid']),
   ];
 }

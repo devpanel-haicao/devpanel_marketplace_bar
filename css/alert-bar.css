@@ -46,10 +46,13 @@ body:has(#dp-alert-wrapper) #toolbar-bar {
 .dp-toggle-btn {
     background: transparent; color: var(--dp-text);
     border: 1px solid var(--dp-border); border-radius: 6px;
-    padding: 8px 16px; cursor: pointer;
+    padding: 9px 16px; cursor: pointer;
     display: flex; align-items: center; gap: 8px;
     font-size: 14px; font-weight: 500;
     transition: background 0.2s;
+    margin-left: auto;
+    margin-right: 15px;
+    min-height: 42.5px;
 }
 .dp-toggle-btn:hover { background: var(--dp-border); }
 .dp-toggle-btn svg { width: 16px; height: 16px; transition: transform 0.3s; }
@@ -74,10 +77,23 @@ body:has(#dp-alert-wrapper) #toolbar-bar {
 .dp-details-grid {
     display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
     padding: 24px 40px;
+    position: relative;
 }
 .dp-detail-item { display: flex; flex-direction: column; gap: 4px; }
-.dp-detail-label {
+.dp-detail-label,
+.dp-detail-item.setting-item a {
     color: var(--dp-text-muted); font-size: 11px; font-weight: 700;
     text-transform: uppercase; letter-spacing: 0.5px;
 }
 .dp-detail-value { color: var(--dp-text); font-size: 15px; word-break: break-all; }
+
+.dp-detail-item.setting-item {
+    position: absolute;
+    right: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.dp-detail-item.setting-item a:hover {
+    text-decoration: underline;
+}
