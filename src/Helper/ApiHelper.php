@@ -65,7 +65,7 @@ class ApiHelper {
           'email' => $api_data['email'] ?? '',
           'buyLink' => $buy_link,
           'showBuyNow' => $showBuyNow,
-          'isPaid' => $is_paid == 'true' ? 'true' : 'false',
+          'isPaid' => $is_paid == 'true',
         ];
 
         // Save to config.

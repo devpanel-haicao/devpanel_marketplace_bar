@@ -17,6 +17,7 @@ function devpanel_marketplace_bar_theme($existing, $type, $theme, $path) {
         'email' => '',
         'buy_link' => '',
         'show_buy_now' => FALSE,
+        'is_paid' => FALSE,
       ],
       'template' => 'devpanel-marketplace-bar',
     ],
