@@ -14,3 +14,11 @@ function devpanel_marketplace_bar_install() {
   // Fetch initial data on install.
   ApiHelper::fetchAndSaveData();
 }
+
+
+/**
+ * Re-fetch marketplace data to apply the new API logic.
+ */
+function devpanel_marketplace_bar_update_10001() {
+  ApiHelper::fetchAndSaveData();
+}
