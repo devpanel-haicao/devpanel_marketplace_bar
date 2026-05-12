@@ -44,6 +44,7 @@ function devpanel_marketplace_bar_page_attachments(array &$attachments) {
  */
 function devpanel_marketplace_bar_page_bottom(array &$page_bottom) {
   $config = \Drupal::config('devpanel_marketplace_bar.settings');
+  $is_paid = getenv('IS_FS_PAID');
   
   // Initialize the render array with cache tags so page cache knows about this config.
   $page_bottom['devpanel_marketplace_bar'] = [
@@ -66,6 +67,6 @@ function devpanel_marketplace_bar_page_bottom(array &$page_bottom) {
     '#email' => $data['email'] ?? '',
     '#buy_link' => $data['buyLink'] ?? '',
     '#show_buy_now' => !empty($data['showBuyNow']),
-    '#is_paid'  => !empty($data['isPaid']),
+    '#is_paid'  => $is_paid == 'true',
   ];
 }
