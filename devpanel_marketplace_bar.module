@@ -36,42 +36,87 @@ function devpanel_marketplace_bar_page_attachments(array &$attachments) {
     $attachments['#attached']['library'][] = 'devpanel_marketplace_bar/marketplace_bar';
   }
   
-  // Add cache tag so that the page head cache is invalidated when config changes.
-  $attachments['#cache']['tags'][] = 'config:devpanel_marketplace_bar.settings';
+  // Disable caching since getenv('IS_FS_PAID') can change at any time.
+  $attachments['#cache']['max-age'] = 0;
+}
+
+/**
+ * Computes the buy link based on current environment variables.
+ */
+function _devpanel_marketplace_bar_get_buy_link($is_paid) {
+  $git_branch = getenv('DP_GIT_BRANCH');
+
+  switch ($git_branch) {
+    case 'main':
+      $base_proxy_url = 'https://www.drupalforge.org';
+      $dp_base_url = 'https://console.devpanel.com';
+      break;
+    default:
+      $base_proxy_url = 'https://stage.drupalforge.org';
+      $dp_base_url = 'https://alpha.devpanel.com';
+      break;
+  }
+
+  if ($is_paid) {
+    return sprintf(
+      '%s/workspaces/%s/projects/%s/applications/%s/overview',
+      $dp_base_url,
+      getenv('DP_WORKSPACE_ID'),
+      getenv('DP_PROJECT_ID'),
+      getenv('DP_APP_ID')
+    );
+  }
+
+  return '';
 }
 
 /**
  * Implements hook_page_bottom().
  */
 function devpanel_marketplace_bar_page_bottom(array &$page_bottom) {
-  $config = \Drupal::config('devpanel_marketplace_bar.settings');
-  $is_paid = getenv('IS_FS_PAID');
-  
-  // Initialize the render array with cache tags so page cache knows about this config.
-  // Set max-age to 0 to prevent caching, since is_paid comes from getenv() which can
-  // change at any time independently of Drupal's config/cache system.
+  // Disable caching entirely — is_paid and buy_link depend on getenv() which
+  // can change at any time independently of Drupal's config/cache system.
   $page_bottom['devpanel_marketplace_bar'] = [
     '#cache' => [
-      'tags' => $config->getCacheTags(),
       'max-age' => 0,
+      'contexts' => ['user.roles:authenticated'],
     ],
   ];
+
+  $config = \Drupal::config('devpanel_marketplace_bar.settings');
 
   // Do not show the bar if it's disabled.
   if (!$config->get('enabled')) {
     return;
   }
 
+  // Auto-fetch data if config data is empty (e.g., first install or fetch failed).
   $data = $config->get('data') ?: [];
-  
+  if (empty($data) || empty($data['subId']) || $data['subId'] === 'submissionId') {
+    \Drupal\devpanel_marketplace_bar\Helper\ApiHelper::fetchAndSaveData();
+    $data = \Drupal::configFactory()->get('devpanel_marketplace_bar.settings')->get('data') ?: [];
+  }
+
+  // Always read is_paid from environment at render time.
+  $is_paid = getenv('IS_FS_PAID') === 'true';
+
+  // Compute buy link from current env vars (not cached in config).
+  $buy_link = _devpanel_marketplace_bar_get_buy_link($is_paid);
+  // Fallback: if not paid, build purchase link from config data.
+  if (!$is_paid && !empty($data['subId']) && !empty($data['templateId'])) {
+    $git_branch = getenv('DP_GIT_BRANCH');
+    $base_proxy_url = ($git_branch === 'main') ? 'https://www.drupalforge.org' : 'https://stage.drupalforge.org';
+    $buy_link = $base_proxy_url . '/app/purchase/' . $data['subId'] . '/' . $data['templateId'];
+  }
+
   $page_bottom['devpanel_marketplace_bar'] += [
     '#theme' => 'devpanel_marketplace_bar',
     '#app_name' => $data['appName'] ?? 'My Application',
     '#sub_id' => $data['subId'] ?? '',
     '#email' => $data['email'] ?? '',
-    '#buy_link' => $data['buyLink'] ?? '',
+    '#buy_link' => $buy_link,
     '#show_buy_now' => !empty($data['showBuyNow']),
-    '#is_paid'  => $is_paid == 'true',
+    '#is_paid' => $is_paid,
     '#logged_in' => \Drupal::currentUser()->isAuthenticated(),
   ];
 }

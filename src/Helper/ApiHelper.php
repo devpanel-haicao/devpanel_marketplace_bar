@@ -6,7 +6,6 @@ class ApiHelper {
 
   public static function fetchAndSaveData() {
     $app_id = getenv('DP_APP_ID');
-    $is_paid = getenv('IS_FS_PAID');
     
     if (!$app_id) {
       \Drupal::logger('devpanel_marketplace_bar')->warning('DP_APP_ID is empty.');
@@ -27,7 +26,6 @@ class ApiHelper {
     }
 
     $proxy_url = $base_proxy_url . '/api/internal/alert-app-info?app_id=' . $app_id;
-    $base_platform_url = $base_proxy_url . '/app/purchase/';
     
     $client = \Drupal::httpClient();
     try {
@@ -46,26 +44,14 @@ class ApiHelper {
         $templateId = $api_data['templateId'] ?? 'templateId';
         $showBuyNow = !empty($api_data['showBuyNow']);
 
-        $buy_link = '';
-        if ($is_paid == 'true') {
-          $buy_link = sprintf(
-            '%s/workspaces/%s/projects/%s/applications/%s/overview',
-            $dp_base_url,
-            getenv('DP_WORKSPACE_ID'),
-            getenv('DP_PROJECT_ID'),
-            getenv('DP_APP_ID')
-          );
-        } else {
-          $buy_link = $base_platform_url . $submissionId . '/' . $templateId;
-        }
-
+        // Store raw API data. buyLink and isPaid are computed at render time
+        // from env vars so they always reflect the current environment state.
         $safe_data = [
           'appName' => $api_data['appName'] ?? 'My Application',
           'subId' => $submissionId,
+          'templateId' => $templateId,
           'email' => $api_data['email'] ?? '',
-          'buyLink' => $buy_link,
           'showBuyNow' => $showBuyNow,
-          'isPaid' => $is_paid == 'true',
         ];
 
         // Save to config.
