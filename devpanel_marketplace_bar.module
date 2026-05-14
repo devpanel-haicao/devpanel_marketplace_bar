@@ -18,6 +18,7 @@ function devpanel_marketplace_bar_theme($existing, $type, $theme, $path) {
         'buy_link' => '',
         'show_buy_now' => FALSE,
         'is_paid' => FALSE,
+        'logged_in' => FALSE,
       ],
       'template' => 'devpanel-marketplace-bar',
     ],
@@ -47,9 +48,12 @@ function devpanel_marketplace_bar_page_bottom(array &$page_bottom) {
   $is_paid = getenv('IS_FS_PAID');
   
   // Initialize the render array with cache tags so page cache knows about this config.
+  // Set max-age to 0 to prevent caching, since is_paid comes from getenv() which can
+  // change at any time independently of Drupal's config/cache system.
   $page_bottom['devpanel_marketplace_bar'] = [
     '#cache' => [
       'tags' => $config->getCacheTags(),
+      'max-age' => 0,
     ],
   ];
 
@@ -68,5 +72,6 @@ function devpanel_marketplace_bar_page_bottom(array &$page_bottom) {
     '#buy_link' => $data['buyLink'] ?? '',
     '#show_buy_now' => !empty($data['showBuyNow']),
     '#is_paid'  => $is_paid == 'true',
+    '#logged_in' => \Drupal::currentUser()->isAuthenticated(),
   ];
 }

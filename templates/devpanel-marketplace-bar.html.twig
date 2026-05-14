@@ -41,9 +41,11 @@
         <span class="dp-detail-label">Contact Email</span>
         <span class="dp-detail-value">{{ email }}</span>
       </div>
+      {% if logged_in %}
       <div class="dp-detail-item setting-item">
         <a class="dp-detail-label" href="/admin/config/system/devpanel-marketplace-bar">Settings</a>
       </div>
+      {% endif %}
     </div>
   </div>
 </div>
