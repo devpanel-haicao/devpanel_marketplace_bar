@@ -98,7 +98,7 @@ function devpanel_marketplace_bar_page_bottom(array &$page_bottom) {
   }
 
   // Always read is_paid from environment at render time.
-  $is_paid = getenv('IS_FS_PAID') === 'true';
+  $is_paid = (getenv('IS_FS_PAID') === 'true') ? true : false;
 
   // Compute buy link from current env vars (not cached in config).
   $buy_link = _devpanel_marketplace_bar_get_buy_link($is_paid);
