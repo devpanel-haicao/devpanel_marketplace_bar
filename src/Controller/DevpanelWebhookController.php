@@ -35,7 +35,7 @@ class DevpanelWebhookController extends ControllerBase {
 
     // Decode JSON
     $data = json_decode($payload_json, TRUE);
-    if (json_last_error() !== JSON_ERROR_NONE || empty($data['_id'])) {
+    if (json_last_error() !== JSON_ERROR_NONE || empty($data['applicationId'])) {
       throw new BadRequestHttpException('Invalid JSON payload.');
     }
 
