@@ -45,7 +45,7 @@ class DevpanelWebhookController extends ControllerBase {
       
       // Hàm setData() sẽ thay thế toàn bộ config cũ bằng mảng JSON mới nhận được.
       // Cấu trúc phân cấp (nested array) của JSON sẽ được Drupal tự động parse thành Config hợp lệ.
-      $config->setData($data);
+      $config->set('data', $data);
       $config->save();
 
       $this->getLogger('webhook_receiver')->info('Đã cập nhật cấu hình devpanel_marketplace_bar.settings thành công từ Webhook.');
