@@ -48,7 +48,7 @@ class DevpanelWebhookController extends ControllerBase {
       $config->set('data', $data);
       $config->save();
 
-      $this->getLogger('webhook_rdevpanel_marketplace_bareceiver')->info('Đã cập nhật cấu hình devpanel_marketplace_bar.settings thành công từ Webhook.');
+      $this->getLogger('devpanel_marketplace_bar')->info('Đã cập nhật cấu hình devpanel_marketplace_bar.settings thành công từ Webhook.');
 
       return new JsonResponse(['status' => 'success', 'message' => 'Config updated'], 200);
 
