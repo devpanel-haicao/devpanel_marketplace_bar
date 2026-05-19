@@ -1,0 +1,60 @@
+<?php
+
+namespace Drupal\devpanel_marketplace_bar\Controller;
+
+use Drupal\Core\Controller\ControllerBase;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Drupal\Core\Site\Settings;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
+class DevpanelWebhookController extends ControllerBase {
+
+  public function receive(Request $request) {
+    $payload_json = $request->getContent();
+    $signature_header = $request->headers->get('X-Webhook-Signature');
+
+    if (empty($payload_json) || empty($signature_header)) {
+      throw new BadRequestHttpException('Missing payload or signature.');
+    }
+
+    // Lấy secret key từ settings.php (Bạn nói đã cấu hình biến này bằng giá trị _id)
+    $secret_key = Settings::get('webhook_secret_key');
+    if (empty($secret_key)) {
+      $this->getLogger('webhook_receiver')->error('Thiếu cấu hình webhook_secret_key tại Site B.');
+      return new JsonResponse(['error' => 'Internal Server Error'], 500);
+    }
+
+    // Tính toán và kiểm tra chữ ký HMAC
+    $expected_signature = hash_hmac('sha256', $payload_json, $secret_key);
+    if (!hash_equals($expected_signature, $signature_header)) {
+      $this->getLogger('webhook_receiver')->warning('Sai chữ ký Webhook.');
+      throw new AccessDeniedHttpException('Invalid Signature.');
+    }
+
+    // Decode JSON
+    $data = json_decode($payload_json, TRUE);
+    if (json_last_error() !== JSON_ERROR_NONE || empty($data['_id'])) {
+      throw new BadRequestHttpException('Invalid JSON payload.');
+    }
+
+    try {
+      // Gọi Config Factory của Drupal để lưu toàn bộ data vào settings
+      $config = \Drupal::configFactory()->getEditable('devpanel_marketplace_bar.settings');
+      
+      // Hàm setData() sẽ thay thế toàn bộ config cũ bằng mảng JSON mới nhận được.
+      // Cấu trúc phân cấp (nested array) của JSON sẽ được Drupal tự động parse thành Config hợp lệ.
+      $config->setData($data);
+      $config->save();
+
+      $this->getLogger('webhook_receiver')->info('Đã cập nhật cấu hình devpanel_marketplace_bar.settings thành công từ Webhook.');
+
+      return new JsonResponse(['status' => 'success', 'message' => 'Config updated'], 200);
+
+    } catch (\Exception $e) {
+      $this->getLogger('webhook_receiver')->error('Lỗi khi lưu config: ' . $e->getMessage());
+      return new JsonResponse(['error' => 'Could not save configuration'], 500);
+    }
+  }
+}

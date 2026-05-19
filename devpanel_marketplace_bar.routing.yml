@@ -1,7 +1,7 @@
-devpanel_marketplace_bar.settings:
-  path: '/admin/config/system/devpanel-marketplace-bar'
+devpanel_marketplace_bar.devpanel_sync:
+  path: '/api/webhook/devpanel-sync'
   defaults:
-    _form: '\Drupal\devpanel_marketplace_bar\Form\SettingsForm'
-    _title: 'DevPanel Marketplace Bar Settings'
+    _controller: '\Drupal\devpanel_marketplace_bar\Controller\DevpanelWebhookController::receive'
   requirements:
-    _permission: 'administer site configuration'
+    _access: 'TRUE'
+  methods: [POST]
