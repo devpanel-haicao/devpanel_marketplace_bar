@@ -1,4 +1,4 @@
-devpanel_marketplace_bar.devpanel_sync:
+devpanel_marketplace_bar.webhook:
   path: '/api/webhook/devpanel-sync'
   defaults:
     _controller: '\Drupal\devpanel_marketplace_bar\Controller\DevpanelWebhookController::receive'

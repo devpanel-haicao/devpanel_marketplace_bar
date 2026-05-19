@@ -22,14 +22,14 @@ class DevpanelWebhookController extends ControllerBase {
     // Lấy secret key từ settings.php (Bạn nói đã cấu hình biến này bằng giá trị _id)
     $secret_key = Settings::get('webhook_secret_key');
     if (empty($secret_key)) {
-      $this->getLogger('webhook_receiver')->error('Thiếu cấu hình webhook_secret_key tại Site B.');
+      $this->getLogger('devpanel_marketplace_bar')->error('Thiếu cấu hình webhook_secret_key tại Site B.');
       return new JsonResponse(['error' => 'Internal Server Error'], 500);
     }
 
     // Tính toán và kiểm tra chữ ký HMAC
     $expected_signature = hash_hmac('sha256', $payload_json, $secret_key);
     if (!hash_equals($expected_signature, $signature_header)) {
-      $this->getLogger('webhook_receiver')->warning('Sai chữ ký Webhook.');
+      $this->getLogger('devpanel_marketplace_bar')->warning('Sai chữ ký Webhook.');
       throw new AccessDeniedHttpException('Invalid Signature.');
     }
 
@@ -48,12 +48,12 @@ class DevpanelWebhookController extends ControllerBase {
       $config->set('data', $data);
       $config->save();
 
-      $this->getLogger('webhook_receiver')->info('Đã cập nhật cấu hình devpanel_marketplace_bar.settings thành công từ Webhook.');
+      $this->getLogger('webhook_rdevpanel_marketplace_bareceiver')->info('Đã cập nhật cấu hình devpanel_marketplace_bar.settings thành công từ Webhook.');
 
       return new JsonResponse(['status' => 'success', 'message' => 'Config updated'], 200);
 
     } catch (\Exception $e) {
-      $this->getLogger('webhook_receiver')->error('Lỗi khi lưu config: ' . $e->getMessage());
+      $this->getLogger('devpanel_marketplace_bar')->error('Lỗi khi lưu config: ' . $e->getMessage());
       return new JsonResponse(['error' => 'Could not save configuration'], 500);
     }
   }
