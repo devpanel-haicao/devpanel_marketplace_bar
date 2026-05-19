@@ -43,9 +43,14 @@ class DevpanelWebhookController extends ControllerBase {
       // Gọi Config Factory của Drupal để lưu toàn bộ data vào settings
       $config = \Drupal::configFactory()->getEditable('devpanel_marketplace_bar.settings');
       
-      // Hàm setData() sẽ thay thế toàn bộ config cũ bằng mảng JSON mới nhận được.
-      // Cấu trúc phân cấp (nested array) của JSON sẽ được Drupal tự động parse thành Config hợp lệ.
-      $config->set('data', $data);
+      // Lấy cấu hình cũ hiện đang có trên Site B
+      $existing_data = $config->get('data') ?: [];
+      
+      // array_merge sẽ giữ nguyên các biến cũ (template_id, enable_cde...) 
+      // và chỉ cập nhật/đè các biến mới được gửi sang (như is_purchase)
+      $merged_data = array_merge($existing_data, $data);
+      
+      $config->set('data', $merged_data);
       $config->save();
 
       $this->getLogger('devpanel_marketplace_bar')->info('Đã cập nhật cấu hình devpanel_marketplace_bar.settings thành công từ Webhook.');
