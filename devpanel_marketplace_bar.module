@@ -29,13 +29,64 @@ function devpanel_marketplace_bar_theme($existing, $type, $theme, $path) {
  * Implements hook_page_attachments().
  */
 function devpanel_marketplace_bar_page_attachments(array &$attachments) {
-  // $config = \Drupal::config('devpanel_marketplace_bar.settings');
+  $config = \Drupal::config('devpanel_marketplace_bar.settings');
   
-  // // Attach the library if the bar is enabled.
-  // if ($config->get('enabled')) {
-  //   $attachments['#attached']['library'][] = 'devpanel_marketplace_bar/marketplace_bar';
-  // }
+  // Attach the library if the bar is enabled.
+  if ($config->get('enabled')) {
+    $attachments['#attached']['library'][] = 'devpanel_marketplace_bar/marketplace_bar';
+  }
   
-  // // Disable caching since getenv('IS_FS_PAID') can change at any time.
-  // $attachments['#cache']['max-age'] = 0;
+  // Disable caching since getenv('IS_FS_PAID') can change at any time.
+  $attachments['#cache']['max-age'] = 0;
+}
+
+/**
+ * Implements hook_page_bottom().
+ */
+function devpanel_marketplace_bar_page_bottom(array &$page_bottom) {
+  // Disable caching entirely — is_paid and buy_link depend on getenv() which
+  // can change at any time independently of Drupal's config/cache system.
+  $page_bottom['devpanel_marketplace_bar'] = [
+    '#cache' => [
+      'max-age' => 0,
+      'contexts' => ['user.roles:authenticated'],
+    ],
+  ];
+
+  $config = \Drupal::config('devpanel_marketplace_bar.settings');
+
+  // Do not show the bar if it's disabled.
+  if (!$config->get('enabled')) {
+    return;
+  }
+
+  // Auto-fetch data if config data is empty (e.g., first install or fetch failed).
+  $data = $config->get('data') ?: [];
+  if (!empty($data) && !empty($data['applicationId'])) {
+    // Always read is_paid from environment at render time.
+    $is_paid = $data['is_purchase'] ?: false;
+
+    // Compute buy link from current env vars (not cached in config).
+    $base_url = $data['base_url'] ?? 'https://www.drupalforge.org/';
+    $buy_link = $base_url . '/app/purchase/' . $data['submission_uuid'] . '/' . $data['template_id'];
+
+    $expired_time = $data['expiredTime'] / 1000;
+    $current_time = \Drupal::time()->getCurrentTime();
+    $remaining = $expired_time - $current_time;
+    $remaining = $remaining > 0 ? $remaining : 0;
+    $remaining_format = gmdate('H:i:s', $remaining);
+
+    $page_bottom['devpanel_marketplace_bar'] += [
+      '#theme' => 'devpanel_marketplace_bar',
+      '#app_name' => $data['app_name'] ?? 'My Application',
+      '#sub_id' => $data['submission_uuid'] ?? '',
+      '#email' => $data['email'] ?? '',
+      '#buy_link' => $buy_link,
+      '#show_buy_now' => !empty($data['sale_template']),
+      '#is_paid' => $is_paid,
+      '#remaining' => $remaining_format,
+      '#logged_in' => \Drupal::currentUser()->isAuthenticated(),
+    ];
+
+  }
 }

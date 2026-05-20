@@ -9,6 +9,10 @@
     <div class="dp-logo">
       <img src="https://drupalforge.s3.us-west-2.amazonaws.com/prod/public/2026-05/df-logo-white.svg" alt="DevPanel" />
     </div>
+
+    {% if remaining is not empty %}
+    <span class="countdown">{{ remaining }}</span>
+    {% endif %}
     
     <button id="dp-toggle-btn" class="dp-toggle-btn">
       App Details
