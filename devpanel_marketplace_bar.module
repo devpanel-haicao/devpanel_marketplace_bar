@@ -12,13 +12,11 @@ function devpanel_marketplace_bar_theme($existing, $type, $theme, $path) {
   return [
     'devpanel_marketplace_bar' => [
       'variables' => [
-        'app_name' => '',
-        'sub_id' => '',
-        'email' => '',
         'buy_link' => '',
         'show_buy_now' => FALSE,
         'is_paid' => FALSE,
         'remaining' => '',
+        'app_data' => [],
         'logged_in' => FALSE,
       ],
       'template' => 'devpanel-marketplace-bar',
@@ -35,6 +33,12 @@ function devpanel_marketplace_bar_page_attachments(array &$attachments) {
   // Attach the library if the bar is enabled.
   if ($config->get('enabled')) {
     $attachments['#attached']['library'][] = 'devpanel_marketplace_bar/marketplace_bar';
+  }
+
+  $is_admin = \Drupal::service('router.admin_context')->isAdminRoute();
+  
+  if ($is_admin) {
+    $attachments['#attached']['library'][] = 'devpanel_marketplace_bar/marketplace_bar_admin';
   }
   
   // Disable caching since getenv('IS_FS_PAID') can change at any time.
@@ -71,21 +75,23 @@ function devpanel_marketplace_bar_page_bottom(array &$page_bottom) {
     $base_url = $data['base_url'] ?? 'https://www.drupalforge.org/';
     $buy_link = $base_url . '/app/purchase/' . $data['submission_uuid'] . '/' . $data['template_id'];
 
+    if ($is_paid) {
+      $buy_link = $base_url . '/my-app?open_submission=' . $data['submission_uuid'];
+    }
+
     $expired_time = $data['expiredTime'] / 1000;
     $current_time = \Drupal::time()->getCurrentTime();
     $remaining = $expired_time - $current_time;
     $remaining = $remaining > 0 ? $remaining : 0;
-    $remaining_format = gmdate('H:i:s', $remaining);
+    $remaining_format = gmdate('F j, Y - H:i:s', $remaining);
 
     $page_bottom['devpanel_marketplace_bar'] += [
       '#theme' => 'devpanel_marketplace_bar',
-      '#app_name' => $data['app_name'] ?? 'My Application',
-      '#sub_id' => $data['submission_uuid'] ?? '',
-      '#email' => $data['email'] ?? '',
       '#buy_link' => $buy_link,
       '#show_buy_now' => !empty($data['sale_template']),
       '#is_paid' => $is_paid,
       '#remaining' => $remaining_format,
+      '#app_data' => $data,
       '#logged_in' => \Drupal::currentUser()->isAuthenticated(),
     ];
 

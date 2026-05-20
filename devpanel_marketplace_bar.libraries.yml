@@ -5,3 +5,9 @@ marketplace_bar:
       css/alert-bar.css: {}
   js:
     js/alert-bar.js: {}
+
+marketplace_bar_admin:
+  version: 1.0
+  css:
+    theme:
+      css/alert-bar-admin.css: {}

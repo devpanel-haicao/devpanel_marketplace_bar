@@ -6,24 +6,12 @@
     --dp-primary: #3b82f6;
     --dp-primary-hover: #2563eb;
     --dp-border: #334155;
-    --dp-height: 68px; /* Theo chuẩn 68px của bạn */
+    --dp-height: 68px;
 }
 
 body {
     margin-top: var(--dp-height) !important;
 }
-
-/* Only Wordpress */
-body:has(#dp-alert-wrapper) #wpadminbar {
-    top: var(--dp-height) !important;
-}
-/* End */
-
-/* Only Drupal */
-body:has(#dp-alert-wrapper) #toolbar-bar {
-    top: var(--dp-height) !important;
-}
-/* End */
 
 #dp-alert-wrapper {
     position: fixed; top: 0; left: 0; width: 100%;
@@ -43,7 +31,7 @@ body:has(#dp-alert-wrapper) #toolbar-bar {
 .dp-logo { display: flex; align-items: center; }
 .dp-logo img { height: 32px; width: auto; object-fit: contain; }
 
-.db-countdown {
+.dp-countdown {
     color: var(--dp-text);
     margin-left: auto;
     margin-right: 15px;
@@ -58,6 +46,7 @@ body:has(#dp-alert-wrapper) #toolbar-bar {
     transition: background 0.2s;
     margin-right: 15px;
     min-height: 42.5px;
+    white-space: nowrap;
 }
 .dp-toggle-btn:hover { background: var(--dp-border); }
 .dp-toggle-btn svg { width: 16px; height: 16px; transition: transform 0.3s; }
@@ -78,11 +67,39 @@ body:has(#dp-alert-wrapper) #toolbar-bar {
     background-color: var(--dp-bg-panel); border-bottom: 1px solid var(--dp-border);
     max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out;
 }
-.dp-details-panel.open { max-height: 200px; }
+.dp-details-panel.open { max-height: 500px; }
 .dp-details-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
     padding: 24px 40px;
     position: relative;
+}
+.dp-details-grid:has(.dp-cde) {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+.dp-detail-items {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+}
+.dp-items-label {
+    color: var(--dp-text-muted); font-size: 14px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    display: none;
+}
+.dp-details-grid:has(.dp-cde) .dp-detail-items {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+.dp-details-grid:has(.dp-cde) .dp-items-label {
+    display: block;
+}
+.dp-details-grid:has(.dp-cde) .dp-detail-item { 
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+    align-items: baseline;
+}
+.dp-details-grid:has(.dp-cde) .dp-detail-item .dp-detail-label {
+    min-width: 120px;
 }
 .dp-detail-item { display: flex; flex-direction: column; gap: 4px; }
 .dp-detail-label,
@@ -91,6 +108,58 @@ body:has(#dp-alert-wrapper) #toolbar-bar {
     text-transform: uppercase; letter-spacing: 0.5px;
 }
 .dp-detail-value { color: var(--dp-text); font-size: 15px; word-break: break-all; }
+.dp-detail-value a {
+    color: inherit;
+    text-decoration: none;
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+}
+.dp-detail-value a:hover {
+    color: inherit;
+}
+.dp-detail-value a::after {
+    content: "";
+    background-image: url(../images/icons/icon-link-open.svg);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center center;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.dp-detail-value a span {
+    text-decoration: underline;
+}
+.dp-detail-value a:hover span {
+    text-decoration: none;
+}
+.dp-password-val {
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+.dp-action-seen,
+.dp-action-copy {
+    width: 20px;
+    height: 20px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+.dp-action-seen {
+    background-image: url(../images/icons/icon-eye.svg);
+}
+.dp-action-copy {
+    background-image: url(../images/icons/icon-copy.svg);
+}
 
 .dp-detail-item.setting-item {
     position: absolute;
@@ -101,4 +170,14 @@ body:has(#dp-alert-wrapper) #toolbar-bar {
 
 .dp-detail-item.setting-item a:hover {
     text-decoration: underline;
+}
+
+@media only screen and (max-width: 960px) {
+    .dp-countdown {
+        display: none;
+    }
+
+    .dp-toggle-btn {
+        margin-left: auto;
+    }
 }

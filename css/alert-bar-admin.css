@@ -1,0 +1,40 @@
+:root {
+    --dp-bg-top: #0f172a;
+    --dp-bg-panel: #1e293b;
+    --dp-text: #f8fafc;
+    --dp-text-muted: #94a3b8;
+    --dp-primary: #3b82f6;
+    --dp-primary-hover: #2563eb;
+    --dp-border: #334155;
+    --dp-height: 68px;
+}
+
+/* Only Wordpress */
+body:has(#dp-alert-wrapper) #wpadminbar {
+    top: var(--dp-height) !important;
+}
+/* End */
+
+/* Only Drupal */
+body:has(#dp-alert-wrapper) #toolbar-bar,
+body:has(#dp-alert-wrapper) #admin-toolbar,
+body:has(#dp-alert-wrapper) .gin--navigation-top-bar {
+    top: var(--dp-height) !important;
+}
+/* End */
+
+@media (min-width: 64rem) {
+  body:has(#dp-alert-wrapper) :is(#extra-specificity-hack, [data-drupal-admin-styles]).top-bar:has(.top-bar__tools:not(:empty), .top-bar__context:not(:empty), .top-bar__actions:not(:empty)) ~ .dialog-off-canvas-main-canvas {
+    margin-block-start: calc(var(--dp-height) + 54px) !important;
+  }
+}
+
+#devpanel-marketplace-bar-settings-form #edit-table tr.row-vscodepassword td:nth-child(2) {
+  font-size: 0;
+  user-select: none;
+}
+
+#devpanel-marketplace-bar-settings-form #edit-table tr.row-vscodepassword td:nth-child(2)::before {
+  content: "****************************************";
+  font-size: 14px;
+}

@@ -19,17 +19,17 @@ class DevpanelWebhookController extends ControllerBase {
       throw new BadRequestHttpException('Missing payload or signature.');
     }
 
-    // Lấy secret key từ settings.php (Bạn nói đã cấu hình biến này bằng giá trị _id)
+    // Get secret key from settings.php.
     $secret_key = Settings::get('webhook_secret_key');
     if (empty($secret_key)) {
-      $this->getLogger('devpanel_marketplace_bar')->error('Thiếu cấu hình webhook_secret_key tại Site B.');
+      $this->getLogger('devpanel_marketplace_bar')->error('Missing webhook_secret_key setting.');
       return new JsonResponse(['error' => 'Internal Server Error'], 500);
     }
 
-    // Tính toán và kiểm tra chữ ký HMAC
+    // Verify Signature HMAC.
     $expected_signature = hash_hmac('sha256', $payload_json, $secret_key);
     if (!hash_equals($expected_signature, $signature_header)) {
-      $this->getLogger('devpanel_marketplace_bar')->warning('Sai chữ ký Webhook.');
+      $this->getLogger('devpanel_marketplace_bar')->warning('Signature Webhook incorrect.');
       throw new AccessDeniedHttpException('Invalid Signature.');
     }
 
@@ -40,25 +40,24 @@ class DevpanelWebhookController extends ControllerBase {
     }
 
     try {
-      // Gọi Config Factory của Drupal để lưu toàn bộ data vào settings
+      // Save data to settings.
       $config = \Drupal::configFactory()->getEditable('devpanel_marketplace_bar.settings');
       
-      // Lấy cấu hình cũ hiện đang có trên Site B
+      // Get current settings.
       $existing_data = $config->get('data') ?: [];
       
-      // array_merge sẽ giữ nguyên các biến cũ (template_id, enable_cde...) 
-      // và chỉ cập nhật/đè các biến mới được gửi sang (như is_purchase)
+      // Update setting variables.
       $merged_data = array_merge($existing_data, $data);
       
       $config->set('data', $merged_data);
       $config->save();
 
-      $this->getLogger('devpanel_marketplace_bar')->info('Đã cập nhật cấu hình devpanel_marketplace_bar.settings thành công từ Webhook.');
+      $this->getLogger('devpanel_marketplace_bar')->info('Updated devpanel_marketplace_bar.settings from DrupalForge Webhook.');
 
       return new JsonResponse(['status' => 'success', 'message' => 'Config updated'], 200);
 
     } catch (\Exception $e) {
-      $this->getLogger('devpanel_marketplace_bar')->error('Lỗi khi lưu config: ' . $e->getMessage());
+      $this->getLogger('devpanel_marketplace_bar')->error('Error when config saving: ' . $e->getMessage());
       return new JsonResponse(['error' => 'Could not save configuration'], 500);
     }
   }
