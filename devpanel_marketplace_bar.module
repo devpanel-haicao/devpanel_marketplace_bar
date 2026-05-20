@@ -18,6 +18,7 @@ function devpanel_marketplace_bar_theme($existing, $type, $theme, $path) {
         'buy_link' => '',
         'show_buy_now' => FALSE,
         'is_paid' => FALSE,
+        'remaining' => '',
         'logged_in' => FALSE,
       ],
       'template' => 'devpanel-marketplace-bar',
