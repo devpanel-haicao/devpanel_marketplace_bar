@@ -166,6 +166,7 @@ body {
     right: 40px;
     top: 50%;
     transform: translateY(-50%);
+    text-align: right;
 }
 
 .dp-detail-item.setting-item a:hover {
@@ -179,5 +180,10 @@ body {
 
     .dp-toggle-btn {
         margin-left: auto;
+    }
+
+    .dp-details-grid:has(.dp-cde),
+    .dp-detail-items {
+        grid-template-columns: repeat(1, 1fr);
     }
 }
