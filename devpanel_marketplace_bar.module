@@ -83,7 +83,7 @@ function devpanel_marketplace_bar_page_bottom(array &$page_bottom) {
     $current_time = \Drupal::time()->getCurrentTime();
     $remaining = $expired_time - $current_time;
     $remaining = $remaining > 0 ? $remaining : 0;
-    $remaining_format = gmdate('F j, Y - H:i:s', $remaining);
+    $remaining_format = gmdate('F j, Y', $remaining);
 
     $page_bottom['devpanel_marketplace_bar'] += [
       '#theme' => 'devpanel_marketplace_bar',
