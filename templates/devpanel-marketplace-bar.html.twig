@@ -76,6 +76,7 @@
           <span class="dp-detail-value"><a href="{{ app_data.workspaceUrl }}" target="_blank"><span>{{ 'Click here'|t }}</span></a></span>
         </div>
         {% endif %}
+        {% if app_data.enable_cde %}
         <div class="dp-detail-item">
           <span class="dp-detail-label">{{ 'Open VS Code'|t }}:</span>
           <span class="dp-detail-value"><a href="{{ app_data.vscodeURL }}" target="_blank"><span>{{ 'Click here'|t }}</span></a></span>
@@ -88,6 +89,7 @@
             <span class="dp-action-copy"></span>
           </span>
         </div>
+        {% endif %}
       </div>
       {% endif %}
 

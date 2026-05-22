@@ -79,11 +79,8 @@ function devpanel_marketplace_bar_page_bottom(array &$page_bottom) {
       $buy_link = $base_url . '/my-app?open_submission=' . $data['submission_uuid'];
     }
 
-    $expired_time = $data['expiredTime'] / 1000;
-    $current_time = \Drupal::time()->getCurrentTime();
-    $remaining = $expired_time - $current_time;
-    $remaining = $remaining > 0 ? $remaining : 0;
-    $remaining_format = gmdate('F j, Y', $remaining);
+    $expired_time = (int) $data['expiredTime'] / 1000;
+    $remaining_format = \Drupal::service('date.formatter')->format($expired_time, 'custom', 'F j, Y - H:i:s');
 
     $page_bottom['devpanel_marketplace_bar'] += [
       '#theme' => 'devpanel_marketplace_bar',
