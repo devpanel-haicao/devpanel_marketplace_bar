@@ -52,6 +52,8 @@ class DevpanelWebhookController extends ControllerBase {
       $config->set('data', $merged_data);
       $config->save();
 
+      \Drupal::service('cache_tags.invalidator')->invalidateTags(['config:devpanel_marketplace_bar.settings']);
+
       $this->getLogger('devpanel_marketplace_bar')->info('Updated devpanel_marketplace_bar.settings from DrupalForge Webhook.');
 
       return new JsonResponse(['status' => 'success', 'message' => 'Config updated'], 200);
