@@ -4,6 +4,7 @@
  * @file
  * Primary module hooks for DevPanel Marketplace Bar module.
  */
+use Drupal\Core\Cache\Cache;
 
 /**
  * Implements hook_theme().
