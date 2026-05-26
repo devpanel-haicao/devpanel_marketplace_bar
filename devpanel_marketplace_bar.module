@@ -29,6 +29,11 @@ function devpanel_marketplace_bar_theme($existing, $type, $theme, $path) {
  */
 function devpanel_marketplace_bar_page_attachments(array &$attachments) {
   $config = \Drupal::config('devpanel_marketplace_bar.settings');
+
+  $attachments['#cache']['tags'] = Cache::mergeTags(
+    $attachments['#cache']['tags'] ?? [],
+    $config->getCacheTags()
+  );
   
   // Attach the library if the bar is enabled.
   if ($config->get('enabled')) {
@@ -40,25 +45,21 @@ function devpanel_marketplace_bar_page_attachments(array &$attachments) {
   if ($is_admin) {
     $attachments['#attached']['library'][] = 'devpanel_marketplace_bar/marketplace_bar_admin';
   }
-  
-  // Disable caching since getenv('IS_FS_PAID') can change at any time.
-  $attachments['#cache']['max-age'] = 0;
 }
 
 /**
  * Implements hook_page_bottom().
  */
 function devpanel_marketplace_bar_page_bottom(array &$page_bottom) {
-  // Disable caching entirely — is_paid and buy_link depend on getenv() which
-  // can change at any time independently of Drupal's config/cache system.
+  $config = \Drupal::config('devpanel_marketplace_bar.settings');
+  
+  // Create block with Cache Tag.
   $page_bottom['devpanel_marketplace_bar'] = [
     '#cache' => [
-      'max-age' => 0,
+      'tags' => $config->getCacheTags(),
       'contexts' => ['user.roles:authenticated'],
     ],
   ];
-
-  $config = \Drupal::config('devpanel_marketplace_bar.settings');
 
   // Do not show the bar if it's disabled.
   if (!$config->get('enabled')) {
