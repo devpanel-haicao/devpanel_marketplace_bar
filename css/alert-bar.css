@@ -84,6 +84,21 @@ body {
     text-transform: uppercase; letter-spacing: 0.5px;
     display: none;
 }
+.dp-detail-items .dp-detail-item-name {
+    order: 1;
+}
+.dp-detail-items .dp-detail-item-login {
+    order: 2;
+}
+.dp-detail-items .dp-detail-item-username {
+    order: 4;
+}
+.dp-detail-items .dp-detail-item-password {
+    order: 5;
+}
+.dp-detail-items .dp-detail-item-contact {
+    order: 3;
+}
 .dp-details-grid:has(.dp-cde) .dp-detail-items {
     display: flex;
     flex-direction: column;
@@ -97,6 +112,7 @@ body {
     flex-direction: row;
     gap: 4px;
     align-items: baseline;
+    order: unset !important;
 }
 .dp-details-grid:has(.dp-cde) .dp-detail-item .dp-detail-label {
     min-width: 120px;

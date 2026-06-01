@@ -35,22 +35,22 @@
     <div class="dp-details-grid">
       <div class="dp-detail-items">
         <span class="dp-items-label">{{ 'Application Informations'|t }}</span>
-        <div class="dp-detail-item">
+        <div class="dp-detail-item dp-detail-item-name">
           <span class="dp-detail-label">{{ 'Name'|t }}:</span>
           <span class="dp-detail-value">{{ app_data.app_name }}</span>
         </div>
-        <div class="dp-detail-item">
+        <div class="dp-detail-item dp-detail-item-login">
           <span class="dp-detail-label">{{ 'Login URL'|t }}:</span>
           <span class="dp-detail-value"><a href="{{ app_data.loginUrl }}" target="_blank"><span>{{ 'Click here'|t }}</span></a></span>
         </div>
         {% if app_data.username %}
-        <div class="dp-detail-item">
+        <div class="dp-detail-item dp-detail-item-username">
           <span class="dp-detail-label">{{ 'User Name'|t }}:</span>
           <span class="dp-detail-value">{{ app_data.username }}</span>
         </div>
         {% endif %}
         {% if app_data.password %}
-        <div class="dp-detail-item">
+        <div class="dp-detail-item dp-detail-item-password">
           <span class="dp-detail-label">{{ 'Password'|t }}:</span>
           <span class="dp-detail-value dp-password-val" data-value="{{ app_data.password }}">
             ●●●●●●●
@@ -60,7 +60,7 @@
         </div>
         {% endif %}
         {% if app_data.email %}
-        <div class="dp-detail-item">
+        <div class="dp-detail-item dp-detail-item-contact">
           <span class="dp-detail-label">{{ 'Contact Email'|t }}:</span>
           <span class="dp-detail-value">{{ app_data.email }}</span>
         </div>
@@ -92,9 +92,13 @@
       {% endif %}
 
       {% if logged_in %}
-      <div class="dp-detail-item setting-item">
-        <a class="dp-detail-label" href="/admin/config/system/devpanel-marketplace-bar">Settings</a>
-      </div>
+        <div class="dp-detail-item setting-item">
+          <a class="dp-detail-label" href="/admin/config/system/devpanel-marketplace-bar">Settings</a>
+        </div>
+      {% elseif is_paid %}
+        <div class="dp-detail-item setting-item">
+          <a class="dp-detail-label" href="{{ app_data.loginUrl|default('/user') }}">Settings</a>
+        </div>
       {% endif %}
     </div>
   </div>
