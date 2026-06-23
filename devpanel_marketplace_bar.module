@@ -75,7 +75,11 @@ function devpanel_marketplace_bar_page_bottom(array &$page_bottom) {
 
     // Compute buy link from current env vars (not cached in config).
     $base_url = $data['base_url'] ?? 'https://www.drupalforge.org/';
-    $buy_link = $base_url . '/app/purchase/' . $data['submission_uuid'] . '/' . $data['template_id'] . '?source_url=da_marketplace';
+    $buy_link = $base_url . '/app/purchase/' . $data['submission_uuid'] . '/' . $data['template_id'];
+
+    if (!empty($data['source_url'])) {
+      $buy_link .= '?source_url=da_marketplace';
+    }
 
     if ($is_paid) {
       $buy_link = $base_url . '/my-app?open_submission=' . $data['submission_uuid'];
